@@ -5,3 +5,5 @@ numpy
 Flask
 Flask-SocketIO
 shazamio
+gunicorn
+Werkzeug
