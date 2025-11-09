@@ -1,0 +1,4 @@
+# copy this to id_config.yaml
+discogs_user_agent: "VinylSingleFinder/1.0"
+discogs_token: "YOUR_DISCOGS_TOKEN"
+discogs_country: "US"

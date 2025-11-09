@@ -1,0 +1,7 @@
+requests
+PyYAML
+sounddevice
+numpy
+Flask
+Flask-SocketIO
+shazamio
