@@ -10,26 +10,40 @@
     <div class="container">
         <h1>Discogs Jukebox Label Maker</h1>
 
-        <div class="folder-container">
-            <label for="folder-name">Discogs Folder Name:</label>
-            <input type="text" id="folder-name" placeholder="Enter folder name">
-            <button id="set-folder-button">Set Folder</button>
+        <div id="credentials-container">
+            <div class="folder-container">
+                <label for="discogs-token">Discogs Token:</label>
+                <input type="password" id="discogs-token" placeholder="Enter your Discogs token">
+            </div>
+            <div class="folder-container">
+                <label for="discogs-country">Discogs Country:</label>
+                <input type="text" id="discogs-country" placeholder="e.g., US, UK, DE" value="US">
+            </div>
+            <button id="set-credentials-button">Set Credentials</button>
         </div>
 
-        <div class="slot-container">
-            <label>Slot Counter:</label>
-            <span id="slot-counter">1</span>
-            <button id="decrement-slot">-</button>
-            <button id="increment-slot">+</button>
-        </div>
+        <div id="main-app" style="display: none;">
+            <div class="folder-container">
+                <label for="folder-name">Discogs Folder Name:</label>
+                <input type="text" id="folder-name" placeholder="Enter folder name">
+                <button id="set-folder-button">Set Folder</button>
+            </div>
 
-        <div id="status">Ready</div>
+            <div class="slot-container">
+                <label>Slot Counter:</label>
+                <span id="slot-counter">1</span>
+                <button id="decrement-slot">-</button>
+                <button id="increment-slot">+</button>
+            </div>
 
-        <button id="start-identification-button" disabled>Start Identification</button>
+            <div id="status">Ready</div>
 
-        <div class="results-container">
-            <h2>Search Results</h2>
-            <ul id="results-list"></ul>
+            <button id="start-identification-button" disabled>Start Identification</button>
+
+            <div class="results-container">
+                <h2>Search Results</h2>
+                <ul id="results-list"></ul>
+            </div>
         </div>
     </div>
 

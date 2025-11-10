@@ -1,6 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     const socket = io();
 
+    const credentialsContainer = document.getElementById("credentials-container");
+    const mainAppContainer = document.getElementById("main-app");
+    const discogsTokenInput = document.getElementById("discogs-token");
+    const discogsCountryInput = document.getElementById("discogs-country");
+    const setCredentialsButton = document.getElementById("set-credentials-button");
+
     const folderNameInput = document.getElementById("folder-name");
     const setFolderButton = document.getElementById("set-folder-button");
     const decrementSlotButton = document.getElementById("decrement-slot");
@@ -11,12 +17,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultsList = document.getElementById("results-list");
 
     let folderId = null;
-    let slotCounter = 0;
+    let slotCounter = 1;
     let mediaRecorder;
     let audioChunks = [];
     let stream;
 
     // Event Listeners
+    setCredentialsButton.addEventListener("click", () => {
+        const token = discogsTokenInput.value.trim();
+        const country = discogsCountryInput.value.trim();
+        if (token) {
+            socket.emit("set_credentials", { token, country });
+        }
+    });
+
     folderNameInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             setFolderButton.click();
@@ -84,6 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Socket.IO Handlers
     socket.on("connect", () => {
         console.log("Connected to server");
+    });
+
+    socket.on("credentials_set", () => {
+        credentialsContainer.style.display = "none";
+        mainAppContainer.style.display = "block";
     });
 
     socket.on("folder_set", (data) => {

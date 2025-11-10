@@ -4,26 +4,9 @@ Core logic for recording a vinyl single, identifying it using ACRCloud,
 searching for it on Discogs, and adding it to a collection folder.
 """
 
-import base64
-import hashlib
-import hmac
-import os
-import time
-import wave
-
-import sounddevice as sd
-import numpy as np
-import requests
-import yaml
-
-CONFIG_FILE = "id_config.yaml"
-
-
 import asyncio
 from shazamio import Shazam
-
-CONFIG_FILE = "id_config.yaml"
-
+import requests
 
 class ShazamRecognizer:
     """Recognizes audio using the Shazam API via shazamio."""
@@ -53,28 +36,28 @@ class ShazamRecognizer:
             return {"status": {"msg": f"Recognition failed: {e}"}}
 
 
-class AudioRecorder:
-    """Records audio from the microphone."""
-
-    def __init__(self, duration=10, sample_rate=44100, channels=1):
-        self.duration = duration
-        self.sample_rate = sample_rate
-        self.channels = channels
-
-    def record(self, output_file="temp_recording.wav"):
-        """Record audio from microphone"""
-        print(f"Recording for {self.duration} seconds...")
-        recording = sd.rec(int(self.duration * self.sample_rate), samplerate=self.sample_rate, channels=self.channels, dtype='int16')
-        sd.wait()
-        print("Recording complete!")
-
-        with wave.open(output_file, "wb") as wf:
-            wf.setnchannels(self.channels)
-            wf.setsampwidth(2)
-            wf.setframerate(self.sample_rate)
-            wf.writeframes(recording.tobytes())
-
-        return output_file
+#class AudioRecorder:
+#    """Records audio from the microphone."""
+#
+#    def __init__(self, duration=10, sample_rate=44100, channels=1):
+#        self.duration = duration
+#        self.sample_rate = sample_rate
+#        self.channels = channels
+#
+#    def record(self, output_file="temp_recording.wav"):
+#        """Record audio from microphone"""
+#        print(f"Recording for {self.duration} seconds...")
+#        recording = sd.rec(int(self.duration * self.sample_rate), samplerate=self.sample_rate, channels=self.channels, dtype='int16')
+#        sd.wait()
+#        print("Recording complete!")
+#
+#        with wave.open(output_file, "wb") as wf:
+#            wf.setnchannels(self.channels)
+#            wf.setsampwidth(2)
+#            wf.setframerate(self.sample_rate)
+#            wf.writeframes(recording.tobytes())
+#
+#        return output_file
 
 
 class DiscogsAPI:
@@ -193,14 +176,3 @@ class DiscogsAPI:
             return False
 
 
-def load_config(config_file_path):
-    """Loads configuration from a YAML file."""
-    if not os.path.exists(config_file_path):
-        print(f"ERROR: Configuration file '{config_file_path}' not found.")
-        return None
-    try:
-        with open(config_file_path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
-    except yaml.YAMLError as e:
-        print(f"ERROR: Could not parse YAML file '{config_file_path}': {e}")
-        return None
