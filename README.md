@@ -29,3 +29,23 @@ pip install -r requirements.txt
 ## How to use this
 
 Work in progress.
+
+## Build instructions
+
+```
+sudo docker build . --tag us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-source-deploy/discogsautoid:latest
+```
+
+Test it locally
+
+```
+sudo docker run -p 8080:8080 discogsautoid
+```
+
+Upload to gcloud
+
+```
+sudo docket push  us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-source-deploy/discogsautoid:latest
+or
+gcloud builds submit --tag us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-source-deploy/discogsautoid:latest
+```

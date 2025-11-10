@@ -15,7 +15,7 @@ class ShazamRecognizer:
         """Recognize audio using Shazam API"""
         try:
             shazam = Shazam()
-            track = await shazam.recognize_song(audio_file)
+            track = await shazam.recognize(audio_file)
             if track and track.get('track'):
                 track_info = track['track']
                 return {

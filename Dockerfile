@@ -2,7 +2,7 @@
 FROM ubuntu:24.04
 
 # Install FFmpeg, Python, and its dependencies
-RUN apt-get update && apt-get install -y ffmpeg python3 python3-pip python3-venv && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ffmpeg python3 python3-pip python3-venv libzstd1 python3-zstd && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /app
@@ -22,4 +22,4 @@ COPY . .
 EXPOSE 8080
 
 # Define the command to run your Flask application
-CMD ["python3", "app.py"]
+CMD ["gunicorn", "--worker-class", "eventlet", "--bind", "0.0.0.0:8080", "app:app"]
