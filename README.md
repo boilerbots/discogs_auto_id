@@ -55,3 +55,4 @@ Deploy new image
 ```
 gcloud run deploy discogsautoid  --image us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-source-deploy/discogsautoid:latest
 ```
+
