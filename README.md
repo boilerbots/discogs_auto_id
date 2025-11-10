@@ -53,5 +53,5 @@ gcloud builds submit --tag us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-
 Deploy new image
 
 ```
-gcloud deploy discogsautoid  --image us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-source-deploy/discogsautoid:latest
+gcloud run deploy discogsautoid  --image us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-source-deploy/discogsautoid:latest
 ```
