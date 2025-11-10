@@ -6,6 +6,7 @@ Flask web server for the Discogs Jukebox Label Maker.
 import asyncio
 import re
 import yaml
+import os
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO
 
@@ -16,7 +17,7 @@ from auto_id_core import (
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode="eventlet")
 
 discogs_user_agent = "VinylSingleFinder/1.0"
 
@@ -70,13 +71,28 @@ def handle_set_folder(folder_name):
     else:
         socketio.emit("error", {"message": "Could not set folder."}, to=sid)
 
+def do_search(sid, title, artist):
+    """Helper function to run in a background task."""
+    discogs_api = api_instances.get(sid)
+    if not discogs_api:
+        socketio.emit("error", {"message": "Credentials not set."}, to=sid)
+        return
+
+    if not title or not artist:
+        socketio.emit("error", {"message": "Title and artist are required for search."}, to=sid)
+        return
+
+    socketio.emit("status", {"message": f"Searching for {title} by {artist}..."}, to=sid)
+    releases = discogs_api.search_releases(title, artist)
+    socketio.emit("search_results", {"releases": releases}, to=sid)
+
 @socketio.on("identify")
 def handle_identify(audio_data):
     sid = request.sid
     if sid not in api_instances:
         socketio.emit("error", {"message": "Credentials not set."}, to=sid)
         return
-    discogs_api = api_instances[sid]
+    
     audio_file = "temp_recording.webm"
     with open(audio_file, "wb") as f:
         f.write(audio_data)
@@ -91,12 +107,23 @@ def handle_identify(audio_data):
         clean_title = re.sub(r"\s*\(.*?\)", "", raw_title)
         clean_title = re.sub(r"\s*\[.*?\]", "", clean_title)
         title = clean_title.strip()
-        artists = ", ".join([a["name"] for a in metadata["artists"]])
-        socketio.emit("status", {"message": f"Searching for {title} by {artists}..."}, to=sid)
-        releases = discogs_api.search_releases(title, artists)
-        socketio.emit("search_results", {"releases": releases}, to=sid)
+        artist = metadata["artists"][0]["name"]
+        
+        socketio.emit("shazam_result", {"title": title, "artist": artist}, to=sid)
+        socketio.start_background_task(do_search, sid, title, artist)
     else:
         socketio.emit("error", {"message": f"Could not identify song: {result.get('status', {}).get('msg')}"}, to=sid)
+
+    if os.path.exists(audio_file):
+        os.remove(audio_file)
+
+
+@socketio.on("search")
+def handle_search(data):
+    sid = request.sid
+    title = data.get("title")
+    artist = data.get("artist")
+    socketio.start_background_task(do_search, sid, title, artist)
 
 @socketio.on("add_release")
 def handle_add_release(data):
