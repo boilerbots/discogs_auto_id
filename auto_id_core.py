@@ -36,30 +36,6 @@ class ShazamRecognizer:
             return {"status": {"msg": f"Recognition failed: {e}"}}
 
 
-#class AudioRecorder:
-#    """Records audio from the microphone."""
-#
-#    def __init__(self, duration=10, sample_rate=44100, channels=1):
-#        self.duration = duration
-#        self.sample_rate = sample_rate
-#        self.channels = channels
-#
-#    def record(self, output_file="temp_recording.wav"):
-#        """Record audio from microphone"""
-#        print(f"Recording for {self.duration} seconds...")
-#        recording = sd.rec(int(self.duration * self.sample_rate), samplerate=self.sample_rate, channels=self.channels, dtype='int16')
-#        sd.wait()
-#        print("Recording complete!")
-#
-#        with wave.open(output_file, "wb") as wf:
-#            wf.setnchannels(self.channels)
-#            wf.setsampwidth(2)
-#            wf.setframerate(self.sample_rate)
-#            wf.writeframes(recording.tobytes())
-#
-#        return output_file
-
-
 class DiscogsAPI:
     """A wrapper for the Discogs API using requests."""
     def __init__(self, user_agent, token, country="US"):

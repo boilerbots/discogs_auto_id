@@ -11,7 +11,6 @@ from flask_socketio import SocketIO
 
 from auto_id_core import (
     ShazamRecognizer,
-    #AudioRecorder,
     DiscogsAPI,
 )
 
@@ -21,7 +20,6 @@ socketio = SocketIO(app)
 
 discogs_user_agent = "VinylSingleFinder/1.0"
 
-#recorder = AudioRecorder(duration=10)
 recognizer = ShazamRecognizer()
 
 api_instances = {}
