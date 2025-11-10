@@ -100,3 +100,50 @@ button:hover:not(:disabled) {
 #results-list li button:hover {
     background-color: #218838;
 }
+
+.manual-search-box {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    gap: 1rem; /* Space between elements */
+}
+
+.manual-search-box h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.manual-search-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 400px; /* Limit width for better readability */
+}
+
+.manual-search-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align labels to the left */
+}
+
+.manual-search-field label {
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+}
+
+.manual-search-field input[type="text"] {
+    width: 100%;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-right: 0; /* Remove margin from previous input style */
+}
+
+#manual-search-button {
+    margin-top: 1rem;
+    width: auto; /* Adjust width as needed */
+    padding: 0.75rem 1.5rem;
+}

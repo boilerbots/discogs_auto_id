@@ -77,7 +77,7 @@ def handle_identify(audio_data):
         socketio.emit("error", {"message": "Credentials not set."}, to=sid)
         return
     discogs_api = api_instances[sid]
-    audio_file = "temp_recording.wav"
+    audio_file = "temp_recording.webm"
     with open(audio_file, "wb") as f:
         f.write(audio_data)
 

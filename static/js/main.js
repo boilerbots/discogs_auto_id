@@ -16,6 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("start-identification-button");
     const resultsList = document.getElementById("results-list");
 
+    const manualSearchContainer = document.getElementById("manual-search-container");
+    const manualTitleInput = document.getElementById("manual-title");
+    const manualArtistInput = document.getElementById("manual-artist");
+    const manualSearchButton = document.getElementById("manual-search-button");
+
     let folderId = null;
     let slotCounter = 0;
     let mediaRecorder;
@@ -59,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startButton.addEventListener("click", async () => {
         startButton.disabled = true;
         resultsList.innerHTML = "";
+        manualSearchContainer.style.display = "none";
 
         try {
             stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -69,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+                const audioBlob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
                 socket.emit("identify", audioBlob);
                 audioChunks = [];
                 statusDiv.textContent = "Processing audio...";
@@ -95,6 +101,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    manualSearchButton.addEventListener("click", () => {
+        const title = manualTitleInput.value.trim();
+        const artist = manualArtistInput.value.trim();
+        if (title && artist) {
+            resultsList.innerHTML = "";
+            statusDiv.textContent = "Searching...";
+            socket.emit("search", { title, artist });
+        }
+    });
+
     // Socket.IO Handlers
     socket.on("connect", () => {
         console.log("Connected to server");
@@ -115,6 +131,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     socket.on("status", (data) => {
         statusDiv.textContent = data.message;
+    });
+
+    socket.on("shazam_result", (data) => {
+        manualTitleInput.value = data.title;
+        manualArtistInput.value = data.artist;
+        manualSearchContainer.style.display = "block";
     });
 
     socket.on("search_results", (data) => {
