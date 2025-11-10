@@ -6,7 +6,6 @@ aiosignal==1.4.0
 annotated-types==0.7.0
 anyio==4.11.0
 attrs==25.4.0
-audioop-lts
 bidict==0.23.1
 blinker==1.9.0
 certifi==2025.10.5

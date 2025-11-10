@@ -19,11 +19,6 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
 socketio = SocketIO(app)
 
-with open("id_config.yaml", "r") as f:
-    config = yaml.safe_load(f)
-if not config:
-    raise RuntimeError("Could not load id_config.yaml")
-
 discogs_user_agent = "VinylSingleFinder/1.0"
 
 #recorder = AudioRecorder(duration=10)
