@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultsList = document.getElementById("results-list");
 
     let folderId = null;
-    let slotCounter = 1;
+    let slotCounter = 0;
     let mediaRecorder;
     let audioChunks = [];
     let stream;
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     decrementSlotButton.addEventListener("click", () => {
-        if (slotCounter > 1) {
+        if (slotCounter > 0) {
             slotCounter--;
             slotCounterSpan.textContent = slotCounter;
         }
