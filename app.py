@@ -91,7 +91,7 @@ def do_shazam_and_search(sid, audio_data):
     """Runs the entire shazam and search process in a background thread."""
     audio_file_path = None
     try:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_audio_file:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio_file:
             temp_audio_file.write(audio_data)
             audio_file_path = temp_audio_file.name
 

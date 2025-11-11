@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: "audio/webm;codecs=opus" });
+                const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
                 socket.emit("identify", audioBlob);
                 audioChunks = [];
                 statusDiv.textContent = "Processing audio...";
