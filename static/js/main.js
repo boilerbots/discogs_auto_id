@@ -111,13 +111,20 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             mediaRecorder.start();
-            statusDiv.textContent = "Recording for 10 seconds...";
+            
+            let countdown = 10;
+            statusDiv.textContent = `Recording for ${countdown} seconds...`;
 
-            setTimeout(() => {
-                if (mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                statusDiv.textContent = `Recording for ${countdown} seconds...`;
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    if (mediaRecorder.state === "recording") {
+                        mediaRecorder.stop();
+                    }
                 }
-            }, 10000);
+            }, 1000);
 
         } catch (err) {
             statusDiv.textContent = "Error accessing microphone.";
