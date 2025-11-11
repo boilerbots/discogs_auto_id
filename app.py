@@ -7,6 +7,7 @@ import asyncio
 import re
 import yaml
 import os
+import tempfile # Added tempfile import
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO
 
@@ -86,36 +87,41 @@ def do_search(sid, title, artist):
     releases = discogs_api.search_releases(title, artist)
     socketio.emit("search_results", {"releases": releases}, to=sid)
 
+def do_shazam_and_search(sid, audio_data):
+    """Runs the entire shazam and search process in a background thread."""
+    audio_file_path = None
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_audio_file:
+            temp_audio_file.write(audio_data)
+            audio_file_path = temp_audio_file.name
+
+        socketio.emit("status", {"message": "Identifying..."}, to=sid)
+        
+        # Since this is a new thread, we can create a new event loop with asyncio.run()
+        result = asyncio.run(recognizer.recognize(audio_file_path))
+
+        if result.get("status", {}).get("msg") == "Success":
+            metadata = result["metadata"]["music"][0]
+            raw_title = metadata["title"]
+            clean_title = re.sub(r"\s*\(.*?\)", "", raw_title)
+            clean_title = re.sub(r"\s*\[.*?\]", "", clean_title)
+            title = clean_title.strip()
+            artist = metadata["artists"][0]["name"]
+            
+            socketio.emit("shazam_result", {"title": title, "artist": artist}, to=sid)
+            # Call the module-level do_search
+            do_search(sid, title, artist)
+        else:
+            socketio.emit("error", {"message": f"Could not identify song: {result.get('status', {}).get('msg')}"}, to=sid)
+    finally:
+        if audio_file_path and os.path.exists(audio_file_path):
+            os.remove(audio_file_path)
+
 @socketio.on("identify")
 def handle_identify(audio_data):
     sid = request.sid
-    if sid not in api_instances:
-        socketio.emit("error", {"message": "Credentials not set."}, to=sid)
-        return
-    
-    audio_file = "temp_recording.webm"
-    with open(audio_file, "wb") as f:
-        f.write(audio_data)
-
-    socketio.emit("status", {"message": "Identifying..."}, to=sid)
-    result = asyncio.run(recognizer.recognize(audio_file))
-
-    if result.get("status", {}).get("msg") == "Success":
-        metadata = result["metadata"]["music"][0]
-        raw_title = metadata["title"]
-        # Remove text in parentheses and brackets
-        clean_title = re.sub(r"\s*\(.*?\)", "", raw_title)
-        clean_title = re.sub(r"\s*\[.*?\]", "", clean_title)
-        title = clean_title.strip()
-        artist = metadata["artists"][0]["name"]
-        
-        socketio.emit("shazam_result", {"title": title, "artist": artist}, to=sid)
-        socketio.start_background_task(do_search, sid, title, artist)
-    else:
-        socketio.emit("error", {"message": f"Could not identify song: {result.get('status', {}).get('msg')}"}, to=sid)
-
-    if os.path.exists(audio_file):
-        os.remove(audio_file)
+    # Start the entire process in a background task to keep the main thread non-blocking
+    socketio.start_background_task(do_shazam_and_search, sid, audio_data)
 
 
 @socketio.on("search")
