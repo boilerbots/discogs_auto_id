@@ -45,6 +45,7 @@ docker run -p 8080:8080 us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-sou
 Upload to gcloud
 
 ```
+gcloud auth print-access-token | docker login   -u oauth2accesstoken   --password-stdin https://us-central1-docker.pkg.dev
 docker push  us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-source-deploy/discogsautoid:latest
 or
 gcloud builds submit --tag us-central1-docker.pkg.dev/discogs-auto-id/cloud-run-source-deploy/discogsautoid:latest
